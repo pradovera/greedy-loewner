@@ -15,10 +15,12 @@ class barycentricFunction:
 
     @property
     def nsupp(self):
+        # number of support points
         return len(self.supp)
 
     @property
     def size(self):
+        # size of output
         if self.vals is None: return self.nsupp
         return self.vals.shape[1]
 
@@ -61,4 +63,3 @@ class barycentricFunction:
         else:
             out[good_idxs] = (num.dot(self.vals).T / den).T
         return out
-

@@ -5,14 +5,14 @@ from load import load_example
 from barycentric import barycentricFunction
 
 #%% choose example
+allowed_tags = ["MNA_4", "MNA_4_RANDOM", "TLINE",
+                "TLINE_MEMORY", "ISS", "ISS_BATCH"]
 if len(sys.argv) > 1:
     example_tag = sys.argv[1]
 else:
-    example_tag = input("Input example_tag:\n")
+    example_tag = input(("Input example_tag:\n(Allowed values: {})\n").format(
+                                                                 allowed_tags))
 example_tag = example_tag.upper().replace(" ","").strip()
-
-allowed_tags = ["MNA_4", "MNA_4_RANDOM", "TLINE",
-                "TLINE_MEMORY", "ISS", "ISS_BATCH"]
 if example_tag not in allowed_tags:
     raise Exception(("Value of example_tag not recognized. Allowed values:\n"
                      "{}").format(allowed_tags))
@@ -20,15 +20,16 @@ if example_tag not in allowed_tags:
 #%% load example
 engine, Smax, estimator, N_test, N_memory = load_example(example_tag)
 z_range, size = engine.z_range, engine.size
-sizeh = int(np.round(size ** .5))
+sizeh = int(np.round(size ** .5)) # the transfer function is square (p = m)
 # initialize test set
-z_test = list(np.geomspace(*z_range, N_test))[1:]
+z_test = list(np.geomspace(*z_range, N_test))
 # estimator setup (only for RANDOM)
 estimator.setup(z_range)
 
 #%% get initial sample
 z_sample = z_test.pop(0) # remove initial sample point from test set
 sample = engine.sample(1j * z_sample)
+print("0: sampled at z={}".format(z_sample))
 approx = barycentricFunction(np.array([z_sample]), np.ones(1), sample)
 L = .5j * (sample.conj() - sample).T / z_sample # initial Loewner matrix
 
@@ -48,7 +49,7 @@ for _ in range(Smax): # max number of samples
     idx_sample = np.argmax(indicator)
 
     # estimator mid-setup (only for BATCH)
-    flag = estimator.mid_setup(z_test, idx_sample, indicator, approx)
+    estimator.mid_setup(z_test, idx_sample, indicator, approx)
 
     z_sample = z_test.pop(idx_sample) # remove sample point from test set
     sample = engine.sample(1j * z_sample) # compute new sample
@@ -57,6 +58,7 @@ for _ in range(Smax): # max number of samples
     flag = estimator.post_check(sample, approx)
     if flag == 0: n_memory = 0 # error is too large
     if flag == 1: n_memory += 1 # error is below tolerance
+    print("{}: sampled at z={}".format(approx.nsupp, z_sample))
     
     # update surrogate with new support points and values
     approx.supp = np.append(approx.supp, z_sample)
@@ -67,7 +69,7 @@ for _ in range(Smax): # max number of samples
     for j, (k, s) in enumerate(zip(approx.supp, approx.vals)):
         if j < approx.nsupp - 1: # right column
             L[j * size : (j + 1) * size, [-1]] = (1j * (s.conj() - sample).T
-                                                   / (k + z_sample))
+                                                     / (k + z_sample))
         else: # bottom row
             L[j * size : (j + 1) * size, :] = (1j * (s.conj() - approx.vals).T
                                                   / (z_sample + approx.supp))
@@ -78,11 +80,10 @@ for _ in range(Smax): # max number of samples
 print("greedy loop terminated at {} samples".format(approx.nsupp))
 
 #%% predict and compute errors
-z_post = np.geomspace(*z_range, 1001)
-H_exact = engine.sample(1j * z_post, verbose = 0)
+z_post = np.geomspace(*z_range, 101)
+H_exact = engine.sample(1j * z_post)
 H_approx = approx(z_post)
-H_err = (np.linalg.norm(H_approx - H_exact, axis = 1)
-       / np.linalg.norm(H_exact, axis = 1)) + 1e-16
+H_err = estimator.compute_error(H_approx, H_exact) + 1e-16
 eta = estimator.build_eta(z_test, approx)
 
 #%% plots
