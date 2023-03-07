@@ -2,7 +2,7 @@
 
 This repository contains minimal code for running the numerical examples in the paper:
 
-D. Pradovera, _Towards a certified greedy Loewner framework with minimal sampling_ (2023)
+D. Pradovera, _Toward a certified greedy Loewner framework with minimal sampling_ (2023)
 
 Preprint publicly available [here](https://arxiv.org/abs/2303.01015)!
 
