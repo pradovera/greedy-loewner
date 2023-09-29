@@ -30,7 +30,7 @@ class estimatorLookAhead(estimator):
 
     def post_check(self, sample, approx, *args, **kwargs):
         # error at next sample point
-        self.error = self.compute_error(approx(self.z), sample)
+        self.error = self.compute_error(approx(self.z), sample)[0]
         return 1 * (self.error < self.tol)
 
     def build_eta(self, z_test, approx, *args, **kwargs):

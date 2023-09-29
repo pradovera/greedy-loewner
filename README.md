@@ -9,8 +9,10 @@ Preprint publicly available [here](https://arxiv.org/abs/2303.01015)!
 All examples are from the [SLICOT library](http://slicot.org/20-site/126-benchmark-examples-for-model-reduction)!
 
 ## Prerequisites
-* **numpy** and **scipy**
-* **matplotlib**
+* **python** (version: 3.8.12)
+* **numpy** (version: 1.21.4)
+* **scipy** (version: 1.5.3)
+* **matplotlib** (version: 3.4.3)
 
 ## Execution
 The simulations in the paper can be run via `run.py`.
@@ -26,6 +28,7 @@ The placeholder `$example_tag` can take the self-explanatory values
 * `TLINE_MEMORY`
 * `ISS`
 * `ISS_BATCH`
+* `ISS_RANDOM`
 
 Otherwise, one can simply run
 ```

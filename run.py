@@ -5,8 +5,9 @@ from load import load_example
 from barycentric import barycentricFunction
 
 #%% choose example
-allowed_tags = ["MNA_4", "MNA_4_RANDOM", "TLINE",
-                "TLINE_MEMORY", "ISS", "ISS_BATCH"]
+allowed_tags = ["MNA_4", "MNA_4_RANDOM",
+                "TLINE", "TLINE_MEMORY",
+                "ISS", "ISS_BATCH", "ISS_RANDOM"]
 if len(sys.argv) > 1:
     example_tag = sys.argv[1]
 else:

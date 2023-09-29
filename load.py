@@ -10,19 +10,19 @@ def load_example(name):
         engine = slicotEngine("MNA_4.mat")
     if name in ["TLINE", "TLINE_MEMORY"]:
         engine = slicotEngine("tline.mat")
-    if name in ["ISS", "ISS_BATCH"]:
+    if name in ["ISS", "ISS_BATCH", "ISS_RANDOM"]:
         engine = slicotEngine("iss.mat")
     tol, delta = 1e-3, 1e-8
     if name in ["MNA_4", "TLINE", "TLINE_MEMORY", "ISS"]:
         estimator = estimatorLookAhead(tol, delta, engine)
     if name in ["ISS_BATCH"]:
         estimator = estimatorLookAheadBatch(tol, delta, engine, 5)
-    if name in ["MNA_4_RANDOM"]:
+    if name in ["MNA_4_RANDOM", "ISS_RANDOM"]:
         estimator = estimatorRandom(tol, delta, engine, 100, 42)
     N_test = 10000
     if name in ["MNA_4", "MNA_4_RANDOM", "TLINE"]:
         N_memory = 1
-    if name in ["TLINE_MEMORY", "ISS", "ISS_BATCH"]:
+    if name in ["TLINE_MEMORY", "ISS", "ISS_BATCH", "ISS_RANDOM"]:
         N_memory = 3
     return engine, 1000, estimator, N_test, N_memory
 
