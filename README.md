@@ -1,3 +1,8 @@
+# DISCLAIMER
+This repository contains code for reproducibility purposes.
+
+See [here](https://github.com/pradovera/gLoewner) for a full library implementing the greedy-LF algorithm more abstractly.
+
 # README
 
 This repository contains minimal code for running the numerical examples in the paper:
